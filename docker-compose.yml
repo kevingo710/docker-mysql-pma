@@ -11,7 +11,6 @@ services:
       MYSQL_ROOT_PASSWORD: root
 
     volumes:
-    - ./my.cnf:/etc/mysql/conf.d
     - ./spotify.sql:/data/application/spotify.sql
     - ../docker/data-mysql:/var/lib/mysql
 
