@@ -2,15 +2,16 @@ version : '3.1'
 
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8
     container_name: dk_mysql
-    command: --default-authentication-plugin=mysql_native_password
+    command: --init-file /data/application/spotify.sql
     environment:
       MYSQL_USER: user
       MYSQL_PASSWORD: user
       MYSQL_ROOT_PASSWORD: root
 
     volumes:
+    - ./spotify.sql:/data/application/spotify.sql
     - ../docker/data-mysql:/var/lib/mysql
 
 
