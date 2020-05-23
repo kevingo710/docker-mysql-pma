@@ -1,18 +1,24 @@
 version : '3.1'
 
 services:
+ #MySQL Service
   mysql:
     image: mysql:8
-    container_name: dk_mysql
-    command: --init-file /data/application/spotify.sql
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
     environment:
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user
+      MYSQL_DATABASE: database
       MYSQL_ROOT_PASSWORD: root
-
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
     volumes:
-    - ./spotify.sql:/data/application/spotify.sql
-    - ../docker/data-mysql:/var/lib/mysql
+      - ./mysql/dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
 
 
 
