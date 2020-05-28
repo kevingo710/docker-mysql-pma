@@ -56,7 +56,7 @@ CREATE TABLE `ALBUM` (
   `ID` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `TITLE` varchar(255) NOT NULL,
   `ARTIST_ID` int NOT NULL,
-  `DATE` year(255) NOT NULL,
+  `DATE` year NOT NULL,
   `COVER` mediumblob NOT NULL,
   `GENRE_ID` int NOT NULL
 );
