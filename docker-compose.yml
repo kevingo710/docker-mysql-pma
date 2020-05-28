@@ -6,7 +6,9 @@ services:
     container_name: dk_mysql
     command: --init-file /data/application/spotify.sql
     environment:
-      MYSQL_ROOT_PASSWORD: ${changepass}
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user	
+      MYSQL_ROOT_PASSWORD: root
     ports:
        - 3306:3306
 
