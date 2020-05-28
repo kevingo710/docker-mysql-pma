@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS spotify;
 CREATE DATABASE spotify;
 
 
-CREATE USER 'marc'@'%' IDENTIFIED BY 'pass';
+CREATE USER 'marc'@'%' IDENTIFIED BY 'hi22pass322*';
 GRANT SELECT ON `spotify`.* TO 'marc'@'%';
 
 USE spotify;
