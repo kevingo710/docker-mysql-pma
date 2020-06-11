@@ -49,3 +49,8 @@ CALL sp_orderProduct(4040, curdate(), curdate(), curdate(), 'recibido', NULL,
 --TEST
 SELECT * FROM orderdetails WHERE orderNumber = 4040;
 SELECT * FROM orders WHERE orderNumber = 4040 ;
+
+--PERMISSIONS
+GRANT SELECT ON `classicmodels`.* TO 'marc'@'%';
+GRANT SELECT, DELETE, UPDATE ON `classicmodels`.* TO 'marc'@'%';
+GRANT EXECUTE ON PROCEDURE classicmodels.sp_orderProduct TO 'marc'@'%';
