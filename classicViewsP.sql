@@ -23,3 +23,29 @@ GROUP BY customers.customerName
 ORDER BY productosDiferentes DESC, fechaInicio, fechaFin
 LIMIT 1;
 
+--Crear un procedimiento para ordenar un producto
+
+
+DELIMITER //
+CREATE PROCEDURE sp_orderProduct (orderNumberP INT, orderDateP DATE, requiredDateP DATE,
+                                 shippedDateP DATE, statusP VARCHAR(15), commentsP TEXT,
+                                 customerNumberP INT, productCodeP VARCHAR(15),
+                                 quantityOrderedP INT, priceEachP DECIMAL(10, 2), orderLineNumberP SMALLINT)
+BEGIN
+    START TRANSACTION;
+            INSERT  INTO `orders`(`orderNumber`,`orderDate`,`requiredDate`,`shippedDate`,`status`,`comments`,`customerNumber`)
+            VALUES (orderNumberP,orderDateP,requiredDateP,shippedDateP,statusP,commentsP,customerNumberP);
+
+            INSERT  INTO `orderdetails`(`orderNumber`,`productCode`,`quantityOrdered`,`priceEach`,`orderLineNumber`)
+            VALUES  (orderNumberP,productCodeP,quantityOrderedP,priceEachP,orderLineNumberP);
+END //
+DELIMITER ;
+
+--EXAMPLE
+
+CALL sp_orderProduct(4040, curdate(), curdate(), curdate(), 'recibido', NULL,
+              363, 'S18_1749', 20, 150.70, 7)
+
+--TEST
+SELECT * FROM orderdetails WHERE orderNumber = 4040;
+SELECT * FROM orders WHERE orderNumber = 4040 ;
