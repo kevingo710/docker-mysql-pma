@@ -23,6 +23,24 @@ GROUP BY customers.customerName
 ORDER BY productosDiferentes DESC, fechaInicio, fechaFin
 LIMIT 1;
 
+
+--Quitar el limit y establecer un procedimiento almacenado que defina el parametro de fechas del cliente a observar
+DELIMITER //
+CREATE PROCEDURE sp_verMejorCliente (fechaInicio DATE, fechaFin DATE)
+BEGIN
+    START TRANSACTION;
+            SELECT * FROM BESTCLIENT
+            WHERE fechaInicio = BESTCLIENT.fechaInicio AND fechaFin = BESTCLIENT.fechaFin;
+
+END //
+DELIMITER ;
+
+--Ejemplo
+
+CALL sp_verMejorCliente ('2003-07-07', '2005-04-01');
+
+
+
 --Crear un procedimiento para ordenar un producto
 
 
