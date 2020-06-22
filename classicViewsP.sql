@@ -20,8 +20,7 @@ SELECT customers.customerName AS nombreCliente,SUM(orderdetails.quantityOrdered 
 FROM customers, orderdetails, orders
 WHERE customers.customerNumber = orders.customerNumber AND orders.orderNumber = orderdetails.orderNumber
 GROUP BY customers.customerName
-ORDER BY productosDiferentes DESC, fechaInicio, fechaFin
-LIMIT 1;
+ORDER BY productosDiferentes DESC, fechaInicio, fechaFin;
 
 
 --Quitar el limit y establecer un procedimiento almacenado que defina el parametro de fechas del cliente a observar
