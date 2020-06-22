@@ -150,7 +150,7 @@ create table logProducts(
 id int auto_increment,
 productCode VARCHAR(15),
 dateLog TIMESTAMP DEFAULT NOW(),
-descripcion VARCHAR(255) NOT NULL,
+descripcion VARCHAR(500) NOT NULL,
 PRIMARY KEY (id, productCode));
 
 
@@ -257,3 +257,217 @@ END$$
 DELIMITER ;
 
 
+--4 Registrar Cambios en Ordes
+use classicmodels;
+drop table if exists logOrders;
+create table logOrders(
+id int auto_increment,
+orderNumber int,
+dateLog TIMESTAMP DEFAULT NOW(),
+descripcion VARCHAR(500) NOT NULL,
+PRIMARY KEY (id, orderNumber));
+
+DELIMITER //
+DROP TRIGGER IF EXISTS after_update_orders;
+CREATE TRIGGER after_update_orders
+AFTER UPDATE  ON orders FOR EACH ROW
+Begin
+        IF NEW.orderNumber <> OLD.orderNumber THEN
+		INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de orderNumber: ', OLD.orderNumber, ' a ' , NEW.orderNumber ));
+
+		ELSEIF  NEW.orderDate <> OLD.orderDate THEN
+    	INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de orderDate: ', OLD.orderDate, ' a ' , NEW.orderDate ));
+
+    	ELSEIF  NEW.requiredDate <> OLD.requiredDate THEN
+    	INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de requiredDate: ', OLD.requiredDate, ' a ' , NEW.requiredDate ));
+
+    	ELSEIF  NEW.shippedDate <> OLD.shippedDate THEN
+    	INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de shippedDate: ', OLD.shippedDate, ' a ' , NEW.shippedDate ));
+
+    	ELSEIF  NEW.status <> OLD.status THEN
+    	INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de status: ', OLD.status, ' a ' , NEW.status ));
+
+    	ELSEIF  NEW.comments <> OLD.comments THEN
+    	INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de comments: ', OLD.comments, ' a ' , NEW.comments ));
+
+    	ELSEIF  NEW.customerNumber <> OLD.customerNumber THEN
+    	INSERT INTO logOrders(orderNumber, descripcion)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de customerNumber: ', OLD.customerNumber, ' a ' , NEW.customerNumber ));
+
+
+		END IF;
+End//
+DELIMITER ;
+
+
+--4 Registar cambios en payments
+use classicmodels;
+drop table if exists logPayments;
+create table logPayments(
+id int auto_increment,
+checkNumber    varchar(50)    not null,
+dateLog TIMESTAMP DEFAULT NOW(),
+descripcion VARCHAR(500) NOT NULL,
+PRIMARY KEY (id, checkNumber));
+
+DELIMITER //
+DROP TRIGGER IF EXISTS after_update_payments;
+CREATE TRIGGER after_update_payments
+AFTER UPDATE  ON payments FOR EACH ROW
+Begin
+        IF NEW.checkNumber <> OLD.checkNumber THEN
+		INSERT INTO logPayments(checkNumber, descripcion)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de orderNumber: ', OLD.checkNumber, ' a ' , NEW.checkNumber ));
+
+		ELSEIF  NEW.customerNumber <> OLD.customerNumber THEN
+    	INSERT INTO logPayments(checkNumber, descripcion)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de customerNumber: ', OLD.customerNumber, ' a ' , NEW.customerNumber ));
+
+    	ELSEIF  NEW.paymentDate <> OLD.paymentDate THEN
+    	INSERT INTO logPayments(checkNumber, descripcion)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de paymentDate: ', OLD.paymentDate, ' a ' , NEW.paymentDate ));
+
+    	ELSEIF  NEW.amount <> OLD.amount THEN
+    	INSERT INTO logPayments(checkNumber, descripcion)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de amount: ', OLD.amount, ' a ' , NEW.amount ));
+
+		END IF;
+End//
+DELIMITER ;
+
+
+--4 REGISTRAR EMPLEADO QUE HACE CAMBIOS EN ORDERS
+SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = 10111;
+
+use classicmodels;
+drop table if exists logOrders;
+create table logOrders(
+id int auto_increment,
+orderNumber int,
+dateLog TIMESTAMP DEFAULT NOW(),
+descripcion VARCHAR(500) NOT NULL,
+employesLog VARCHAR(50),
+PRIMARY KEY (id, orderNumber));
+
+DELIMITER //
+DROP TRIGGER IF EXISTS after_update_orders;
+CREATE TRIGGER after_update_orders
+AFTER UPDATE  ON orders FOR EACH ROW
+Begin
+        IF NEW.orderNumber <> OLD.orderNumber THEN
+		INSERT INTO logOrders(orderNumber, descripcion, employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de orderNumber: ', OLD.orderNumber, ' a ' , NEW.orderNumber ),
+		        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber));
+
+		ELSEIF  NEW.orderDate <> OLD.orderDate THEN
+    	INSERT INTO logOrders(orderNumber, descripcion, employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de orderDate: ', OLD.orderDate, ' a ' , NEW.orderDate ),
+		        		        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber));
+
+    	ELSEIF  NEW.requiredDate <> OLD.requiredDate THEN
+    	INSERT INTO logOrders(orderNumber, descripcion, employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de requiredDate: ', OLD.requiredDate, ' a ' , NEW.requiredDate ),
+			        		        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber)
+		);
+
+    	ELSEIF  NEW.shippedDate <> OLD.shippedDate THEN
+    	INSERT INTO logOrders(orderNumber, descripcion, employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de shippedDate: ', OLD.shippedDate, ' a ' , NEW.shippedDate ),
+     		        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                    AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber)
+
+		);
+
+    	ELSEIF  NEW.status <> OLD.status THEN
+    	INSERT INTO logOrders(orderNumber, descripcion, employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de status: ', OLD.status, ' a ' , NEW.status ),
+		            	        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber)
+
+		);
+
+    	ELSEIF  NEW.comments <> OLD.comments THEN
+    	INSERT INTO logOrders(orderNumber, descripcion, employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de comments: ', OLD.comments, ' a ' , NEW.comments ),
+		            	        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber)
+		);
+
+    	ELSEIF  NEW.customerNumber <> OLD.customerNumber THEN
+    	INSERT INTO logOrders(orderNumber, descripcion,employesLog)
+		VALUES (OLD.orderNumber, CONCAT('Actualizacion de customerNumber: ', OLD.customerNumber, ' a ' , NEW.customerNumber ),
+			        		        (SELECT lastName FROM employees, customers, orders WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND orders.customerNumber = customers.customerNumber AND orders.orderNumber = OLD.orderNumber)
+		);
+
+
+		END IF;
+End//
+DELIMITER ;
+
+
+--4 REGISTRA EMPLEADO QUE HACE CAMBIOS EN PAYMENTS
+
+SELECT lastName FROM employees, customers, payments WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND payments.customerNumber = customers.customerNumber AND payments.checkNumber = 'HQ336336';
+
+
+use classicmodels;
+drop table if exists logPayments;
+create table logPayments(
+id int auto_increment,
+checkNumber    varchar(50)    not null,
+dateLog TIMESTAMP DEFAULT NOW(),
+descripcion VARCHAR(500) NOT NULL,
+employesLog VARCHAR(50),
+PRIMARY KEY (id, checkNumber));
+
+DELIMITER //
+DROP TRIGGER IF EXISTS after_update_payments;
+CREATE TRIGGER after_update_payments
+AFTER UPDATE  ON payments FOR EACH ROW
+Begin
+        IF NEW.checkNumber <> OLD.checkNumber THEN
+		INSERT INTO logPayments(checkNumber, descripcion,employesLog)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de orderNumber: ', OLD.checkNumber, ' a ' , NEW.checkNumber ),
+		        (SELECT lastName FROM employees, customers, payments WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND payments.customerNumber = customers.customerNumber AND payments.checkNumber = OLD.checkNumber
+                ));
+
+		ELSEIF  NEW.customerNumber <> OLD.customerNumber THEN
+    	INSERT INTO logPayments(checkNumber, descripcion, employesLog)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de customerNumber: ', OLD.customerNumber, ' a ' , NEW.customerNumber ),
+		        		        (SELECT lastName FROM employees, customers, payments WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                    AND payments.customerNumber = customers.customerNumber AND payments.checkNumber = OLD.checkNumber
+                )
+
+		        );
+
+    	ELSEIF  NEW.paymentDate <> OLD.paymentDate THEN
+    	INSERT INTO logPayments(checkNumber, descripcion, employesLog)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de paymentDate: ', OLD.paymentDate, ' a ' , NEW.paymentDate ),
+		        (SELECT lastName FROM employees, customers, payments WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                                                  AND payments.customerNumber = customers.customerNumber AND payments.checkNumber = OLD.checkNumber
+                )
+		        );
+
+    	ELSEIF  NEW.amount <> OLD.amount THEN
+    	INSERT INTO logPayments(checkNumber, descripcion, employesLog)
+		VALUES (OLD.checkNumber, CONCAT('Actualizacion de amount: ', OLD.amount, ' a ' , NEW.amount ),
+		        		    (SELECT lastName FROM employees, customers, payments WHERE customers.salesRepEmployeeNumber = employees.employeeNumber
+                             AND payments.customerNumber = customers.customerNumber AND payments.checkNumber = OLD.checkNumber
+                ));
+
+		END IF;
+End//
+DELIMITER ;
